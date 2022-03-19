@@ -16,8 +16,29 @@
     <body>
     <!--Add a nav bar here -->
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/djangoapp/about">About us</a>
-      </nav>
+        Dealership Review
+        <!-- <a class="navbar-brand" href="/djangoapp/about">About us</a> -->
+        
+ 
+
+
+        <div class="form-group">
+
+            <form action="{% url 'djangoapp:login' %}"  method="post" class="form-inline my-lg-0" >
+                {% csrf_token %}
+
+                {% if user.is_authenticated %}
+                ({{user.first_name}})
+                <a href="{% url 'djangoapp:logout' %}">Logout</a>
+
+                {% else %}                    
+                <input class="form-control mr-sm-2 m-0" type="text" placeholder="email or username" name="username">
+                <input class="form-control mr-sm-2 m-0" type="password" placeholder="password" name="psw">
+                <button class="btn btn-primary  my-sm-0" type="submit">Login</button>
+                <a href="{% url 'djangoapp:registration' %}">Signup</a>                {% endif %}
+            </form>
+        </div>
+    </nav>
     <!--Add a dealer table here -->
 
     <footer>
