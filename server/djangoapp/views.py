@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -114,15 +114,30 @@ def get_dealerships(request):
 
 
 def get_dealer_details(request, dealer_id):
-        url = "https://0c6e7a2b.eu-gb.apigw.appdomain.cloud/api/review"
-        # Get dealers from the URL
-        dealer_reviews = get_dealer_reviews_from_cf(url, dealer_id)
-        # Concat all dealer's short name
-        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-        # Return a list of dealer short name
-        return HttpResponse(dealer_reviews)
+    url = "https://0c6e7a2b.eu-gb.apigw.appdomain.cloud/api/review"
+    # Get dealers from the URL
+    dealer_reviews = get_dealer_reviews_from_cf(url, dealer_id)
+    # Concat all dealer's short name
+    # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+    # Return a list of dealer short name
+    return HttpResponse(dealer_reviews)
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
 
+
+def add_review(request, dealer_id):
+    # Check if user is Authenticated, only Auth users can post
+    url = "https://0c6e7a2b.eu-gb.apigw.appdomain.cloud/api/review"
+
+    review = {}
+    json_payload  = {}
+
+    review["time"] = datetime.utcnow().isoformat()
+    review["dealership"] = dealer_id
+    review["review"] = "This is a Test add Review"
+
+    json_payload['review'] = review
+
+    response = post_request(url, json_payload)
+    return HttpResponse(response)
+    

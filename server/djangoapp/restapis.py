@@ -13,10 +13,6 @@ NLU_API_KEY = os.getenv('NLU_API_KEY')
 NLU_URL = os.getenv('NLU_URL')
 
 
-# Create a `get_request` to make HTTP GET requests
-# e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
-#                                     auth=HTTPBasicAuth('apikey', api_key))
-
 def get_request(url, api_key, nluText, dealer_Id, **kwargs):
     # Defining payload for url
     payload = {'dealerId': dealer_Id}
@@ -28,7 +24,7 @@ def get_request(url, api_key, nluText, dealer_Id, **kwargs):
         params["text"] = nluText
         params["features"] = {
             "sentiment": {},
-            }
+        }
         params["return_analyzed_text"] = ''
 
         response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
@@ -46,15 +42,22 @@ def get_request(url, api_key, nluText, dealer_Id, **kwargs):
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
 
-# Create a get_dealers_from_cf method to get dealers from a cloud function
-# def get_dealers_from_cf(url, **kwargs):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a CarDealer object list
+def post_request(url, json_payload, **kwargs):
 
+    response = requests.post(url, json=json_payload)
+
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+
+    json_data = json.loads(response.text)
+    return response
+
+
+# Create a get_dealers_from_cf method to get dealers from a cloud function
 def get_dealers_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    json_result = get_request(url, None, None, None)
     if json_result:
         # Get the row list in JSON as dealers
         dealers = json_result["docs"]
@@ -104,8 +107,9 @@ def get_dealer_reviews_from_cf(url, dealerId):
 
     return reviews
 
-
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
+
+
 def analyze_review_sentiments(dealerreview):
     # - Call get_request() with specified arguments
     # - Get the returned sentiment label such as Positive or Negative
