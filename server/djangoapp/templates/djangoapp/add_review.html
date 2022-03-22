@@ -8,22 +8,28 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
-
+    <link rel="stylesheet" href="style.css">
 </head>
     <body>
+        <div class="container m-5">
         <!--Add review form here -->
 
         <form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
         <div class="container">
           <h1>Add a review</h1>
 
+          <div class="form-group">
+            <label for="name"><b>Full Name</b></label>
+            <input class="form-control" type='text' id="name" name="name" required /> 
+          </div>
+
         <div class="form-group">
           <label for="content"><b>Review</b></label>
-          <textarea class="form-control" rows='6' id="content" name="content" rows="2" required></textarea> 
+          <textarea class="form-control" rows='6' id="content" name="review" rows="2" required></textarea> 
         </div>
           
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="purchasecheck" name='purchasecheck'>
+            <input class="form-check-input" type="checkbox" value="" id="purchasecheck" name='purchase'>
             <label class="form-check-label" for="flexCheckDefault">
               Has purchased the car from Sub-Ex Car Dearlership? (select purchased car infromation below if checked)
             </label>
@@ -33,24 +39,24 @@
             <label for="car"><b>Select your car (model-make-year)</b></label>
             <select name="car" id="car" class="form-select" required>
                 {% for car in cars %}
-                    <option selected value={{car.id}}>{{car.name}}-{{car.make.name}}-{{ car.year|date:"Y" }}</option>
+                    <option selected value={{car.model}}-{{car.make}}-{{car.year}}>{{car.model}}-{{car.make}}-{{ car.year }}</option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="form-group">
-            <label for="car"><b>Select Your Purchase Date</b></label>
-            <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate"> 
+            <label for="purchase_date"><b>Select Your Purchase Date</b></label>
+            <input class="date-own form-control" type="date" name="purchase_date" id="purchasedate"> 
         </div>
             
 
         <div class="form-group">
             {% csrf_token %}
-              <button class="button btn-primary" type="submit">Sign Up</button>
+              <button class="button btn-primary" type="submit"> Submit </button>
           </div>
         </div>
       </form>
-
+    </div>
     </body>
 
     <script type="text/javascript">

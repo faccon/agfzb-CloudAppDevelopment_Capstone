@@ -127,33 +127,56 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 
 
-def add_review(request, dealer_id): 
+def add_review(request, dealer_id):
     url = "https://0c6e7a2b.eu-gb.apigw.appdomain.cloud/api/review"
-    
+
     if request.method == 'GET':
         context = {}
-        cars = []
         context['dealer_id'] = dealer_id
         response = get_dealer_reviews_from_cf(url, dealer_id)
+        context['cars'] = []
 
-        for dealer in response:
-            response = dealer.car_model + '-' + dealer.car_make + '-' + str(dealer.car_year)
-            cars.append(response)
-        context['cars'] = cars
+        for item in response:
+            response = {'model': item.car_model,
+                        'make': item.car_make,
+                        'year': item.car_year,
+                        'id': item.id}
+            context['cars'].append(response)
+
         return render(request, 'djangoapp/add_review.html', context)
     else:
-        # Check if user is Authenticated, only Auth users can post
         url = "https://0c6e7a2b.eu-gb.apigw.appdomain.cloud/api/review"
-
+        
         review = {}
-        json_payload  = {}
+        json_payload = {}
+        
+        review['dealership'] = dealer_id
+        review['name'] = request.POST['name']
+        review['purchase'] = request.POST['purchase']
+        review['purchase_date'] = request.POST['purchase_date']
+        review['review'] = request.POST['review']
+        review['time'] = datetime.utcnow().isoformat()
+        review['car_type'] = request.POST['car']
+        review['id'] = dealer_id
 
-        review["time"] = datetime.utcnow().isoformat()
-        review["dealership"] = dealer_id
-        review["review"] = "This is a Test add Review"
+        car_type_length = len(review['car_type']) -1
+        review['car_type']  = review['car_type'][1:car_type_length].split('-')
+        
+        review['car_make'] = review['car_type'][1]
+        review['car_model'] = review['car_type'][0]
+        review['car_year'] = review['car_type'][2]
+
+        # return HttpResponse(review['car_make'])
+
+        # # print(json_payload)
+
+
+        # # review["time"] = datetime.utcnow().isoformat()
+        # # review["dealership"] = dealer_id
+        # # review["review"] = "This is a Test add Review 2"
 
         json_payload['review'] = review
 
         response = post_request(url, json_payload)
-        return HttpResponse(response)
-    
+        print(response)
+        return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
