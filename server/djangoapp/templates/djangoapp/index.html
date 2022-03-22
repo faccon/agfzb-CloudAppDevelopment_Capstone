@@ -18,10 +18,6 @@
     <nav class="navbar navbar-light bg-light">
         Dealership Review
         <!-- <a class="navbar-brand" href="/djangoapp/about">About us</a> -->
-        
- 
-
-
         <div class="form-group">
 
             <form action="{% url 'djangoapp:login' %}"  method="post" class="form-inline my-lg-0" >
@@ -40,11 +36,42 @@
         </div>
     </nav>
     <!--Add a dealer table here -->
-
+    <table class='table table-striped' id='table' data-filter-control="true">
+        <thead>
+            <tr>
+                <th data-field='id'>ID</th>
+                <th data-field='full_name'>Dealer Name</th>
+                <th data-field='city'>City</th>
+                <th data-field='address'>Address</th>
+                <th data-field='zip'>Zip</th>
+                <th data-field='state' data-filter-control="select">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dealer in dealership_list %}
+            <tr>
+                <td>{{dealer.id}}</td>
+                <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a></td>
+                <td>{{ dealer.city }}</td>
+                <td>{{dealer.address}}</td>
+                <td>{{dealer.zip}}</td>
+                <td>{{dealer.st}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!--Page footer-->
     <footer>
         <a href='/djangoapp/contact'><strong> Contact us </strong> </a>
     </footer>
     
     </body>
+
+    <script>
+        $(function() {
+          $('#table').bootstrapTable()
+        })
+      </script>
 
 </html>

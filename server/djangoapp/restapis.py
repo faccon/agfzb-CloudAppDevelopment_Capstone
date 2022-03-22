@@ -113,5 +113,6 @@ def get_dealer_reviews_from_cf(url, dealerId):
 def analyze_review_sentiments(dealerreview):
     # - Call get_request() with specified arguments
     # - Get the returned sentiment label such as Positive or Negative
+    print(NLU_API_KEY)
     response = get_request(NLU_URL, NLU_API_KEY, dealerreview, None)
     return response['sentiment']['document']['label']
