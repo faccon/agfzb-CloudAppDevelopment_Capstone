@@ -10,6 +10,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+from django.utils.datastructures import MultiValueDictKeyError
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -149,31 +150,29 @@ def add_review(request, dealer_id):
         
         review = {}
         json_payload = {}
-        
+
         review['dealership'] = dealer_id
         review['name'] = request.POST['name']
-        review['purchase'] = request.POST['purchase']
         review['purchase_date'] = request.POST['purchase_date']
         review['review'] = request.POST['review']
         review['time'] = datetime.utcnow().isoformat()
         review['car_type'] = request.POST['car']
         review['id'] = dealer_id
-
+        
+        # Substract Car make model and year from car type
         car_type_length = len(review['car_type']) -1
         review['car_type']  = review['car_type'][1:car_type_length].split('-')
         
-        review['car_make'] = review['car_type'][1]
-        review['car_model'] = review['car_type'][0]
-        review['car_year'] = review['car_type'][2]
-
-        # return HttpResponse(review['car_make'])
-
-        # # print(json_payload)
-
-
-        # # review["time"] = datetime.utcnow().isoformat()
-        # # review["dealership"] = dealer_id
-        # # review["review"] = "This is a Test add Review 2"
+        if 'purchase' in request.POST :
+            review['purchase'] = True
+            review['car_make'] = review['car_type'][1]
+            review['car_model'] = review['car_type'][0]
+            review['car_year'] = review['car_type'][2]
+        else:
+            review['purchase'] = False
+            review['car_make'] = ''
+            review['car_model'] = ''
+            review['car_year'] = ''    
 
         json_payload['review'] = review
 

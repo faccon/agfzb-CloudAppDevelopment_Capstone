@@ -16,10 +16,9 @@ NLU_URL = os.getenv('NLU_URL')
 def get_request(url, api_key, nluText, dealer_Id, **kwargs):
     # Defining payload for url
     payload = {'dealerId': dealer_Id}
-    print("GET from {} ".format(url))
+    # print("GET from {} ".format(url))
 
     if api_key:
-        print('in apikey')
         params = dict()
         params["text"] = nluText
         params["features"] = {
@@ -93,17 +92,20 @@ def get_dealer_reviews_from_cf(url, dealerId):
         # for k,v in DealerReviews.items():
         #     print()
         # print(DealerReviews[0]['id'])
-        for review in DealerReviews['docs']:
-            review_doc = review
-            if 'purchase_date' not in review:
-                review_doc['purchase_date'] = ''
-            # Create a CarDealer object with values in `doc` object
-            deale_review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
-                                            review=review_doc["review"], purchase_date=review_doc[
-                                                "purchase_date"], car_make=review_doc["car_make"],
-                                            car_model=review_doc["car_model"],
-                                            car_year=review_doc["car_year"], id=review_doc["id"], sentiment=analyze_review_sentiments(review_doc["review"]))
-            reviews.append(deale_review_obj)
+        if 'docs' in DealerReviews:
+            for review in DealerReviews['docs']:
+                review_doc = review
+                if 'purchase_date' not in review:
+                    review_doc['purchase_date'] = ''
+                # Create a CarDealer object with values in `doc` object
+                deale_review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
+                                                review=review_doc["review"], purchase_date=review_doc[
+                                                    "purchase_date"], car_make=review_doc["car_make"],
+                                                car_model=review_doc["car_model"],
+                                                car_year=review_doc["car_year"], id=review_doc["id"], sentiment=analyze_review_sentiments(review_doc["review"]))
+                reviews.append(deale_review_obj)
+        else: 
+            pass
 
     return reviews
 
